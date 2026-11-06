@@ -6,21 +6,39 @@ const logger = require("../config/logger");
 // 1. Get all applications (with basic applicant info)
 const getAllApplications = async (req, res, next) => {
   try {
-    // Optional filter by status (e.g., ?status=Submitted)
-    const filter = {};
-    if (req.query.status) {
-      filter.admissionStatus = req.query.status;
+    const { status, stream, search, page = 1, limit = 10 } = req.query;
+
+    // Build the query object
+    let query = {};
+    if (status) query.admissionStatus = status;
+    if (stream) query.preferredStream = stream;
+
+    // Search by Application ID (e.g., IEM-2026-1001)
+    if (search) {
+      query.applicationId = { $regex: search, $options: "i" };
     }
 
-    const applications = await Application.find(filter)
-      .populate("applicant", "firstName lastName email") // Only fetch specific user fields
-      .sort({ createdAt: -1 }); // Newest first
+    // Execute query with pagination
+    const applications = await Application.find(query)
+      .populate("applicant", "firstName lastName email")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
 
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, applications, "Applications fetched successfully"),
-      );
+    const total = await Application.countDocuments(query);
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          applications,
+          totalPages: Math.ceil(total / limit),
+          currentPage: parseInt(page),
+          totalApplications: total,
+        },
+        "Applications fetched successfully",
+      ),
+    );
   } catch (error) {
     next(error);
   }
@@ -73,9 +91,45 @@ const updateApplicationStatus = async (req, res, next) => {
     next(error);
   }
 };
+const getDashboardStats = async (req, res, next) => {
+  try {
+    const totalApplications = await Application.countDocuments();
+    const approved = await Application.countDocuments({
+      admissionStatus: "Approved",
+    });
+    const rejected = await Application.countDocuments({
+      admissionStatus: "Rejected",
+    });
+    const pending = await Application.countDocuments({
+      admissionStatus: "Submitted",
+    });
+
+    // Stream-wise breakdown using MongoDB Aggregation
+    const streamStats = await Application.aggregate([
+      { $group: { _id: "$preferredStream", count: { $sum: 1 } } },
+    ]);
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          totalApplications,
+          approved,
+          rejected,
+          pending,
+          streamStats,
+        },
+        "Dashboard stats fetched successfully",
+      ),
+    );
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getAllApplications,
   getApplicationById,
   updateApplicationStatus,
+  getDashboardStats,
 };

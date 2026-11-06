@@ -3,6 +3,8 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const logger = require("./config/logger");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./docs/swagger");
 const {
@@ -11,6 +13,16 @@ const {
 } = require("./middlewares/error.middleware");
 
 const app = express();
+
+// Global Rate Limiter (100 requests per 15 minutes)
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 100, 
+  message: 'Too many requests from this IP, please try again after 15 minutes',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api', globalLimiter);
 
 app.use(cors({ origin: "http://localhost:4200", credentials: true }));
 app.use(express.json({ limit: "16kb" }));

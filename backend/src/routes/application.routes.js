@@ -1,4 +1,5 @@
 const express = require("express");
+const { validateApplication } = require("../middlewares/validation.middleware");
 const {
   submitApplication,
   getMyApplication,
@@ -59,7 +60,7 @@ router.use(verifyJWT);
  *       201:
  *         description: Application submitted
  */
-router.post("/", submitApplication);
+router.post("/", validateApplication, submitApplication);
 
 /**
  * @swagger

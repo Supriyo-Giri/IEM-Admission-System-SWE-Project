@@ -3,7 +3,9 @@ const {
   getAllApplications,
   getApplicationById,
   updateApplicationStatus,
+  getDashboardStats,
 } = require("../controllers/admin.controller");
+
 const { verifyJWT, authorizeRoles } = require("../middlewares/auth.middleware");
 
 const router = express.Router();
@@ -36,6 +38,20 @@ router.use(verifyJWT, authorizeRoles("admin"));
  *         description: List of applications
  */
 router.get("/applications", getAllApplications);
+
+/**
+ * @swagger
+ * /api/admin/stats:
+ *   get:
+ *     summary: Get dashboard statistics (Admin only)
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dashboard statistics
+ */
+router.get("/stats", getDashboardStats);
 
 /**
  * @swagger

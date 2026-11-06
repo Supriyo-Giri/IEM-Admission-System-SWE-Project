@@ -1,10 +1,21 @@
 const express = require("express");
+const rateLimit = require("express-rate-limit");
+
 const {
   registerUser,
   loginUser,
   logoutUser,
   getCurrentUser,
 } = require("../controllers/auth.controller");
+
+
+// Strict limit for login/register
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP to 10 login/register requests per window
+  message: "Too many login attempts, please try again after 15 minutes",
+});
+
 const { verifyJWT } = require("../middlewares/auth.middleware");
 
 const router = express.Router();
@@ -51,7 +62,7 @@ const router = express.Router();
  *       409:
  *         description: Email already exists
  */
-router.post("/register", registerUser);
+router.post("/register",authLimiter, registerUser);
 
 /**
  * @swagger
@@ -79,7 +90,7 @@ router.post("/register", registerUser);
  *       401:
  *         description: Invalid credentials
  */
-router.post("/login", loginUser);
+router.post("/login",authLimiter, loginUser);
 
 /**
  * @swagger

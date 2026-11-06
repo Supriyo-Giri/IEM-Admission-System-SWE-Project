@@ -20,8 +20,15 @@ const applicationSchema = new mongoose.Schema(
       address: { type: String, required: true },
     },
     academicDetails: {
-      highSchoolMarks: { type: Number, required: true },
-      entranceExamScore: { type: Number, required: true },
+      tenthMarks: { type: Number, required: true, min: 0, max: 100 },
+      twelfthMarks: { type: Number, required: true, min: 0, max: 100 },
+      wbjeeRank: { type: Number, default: null }, // Optional
+      jeeMainsRank: { type: Number, default: null }, // Optional
+    },
+    preferredStream: {
+      type: String,
+      required: true,
+      enum: ["CSE", "CSE AI/ML", "CSE IOTCSBT", "CSE CyberSecurity"],
     },
     documents: [
       {

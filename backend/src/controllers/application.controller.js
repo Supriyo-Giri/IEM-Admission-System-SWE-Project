@@ -8,7 +8,7 @@ const fs = require("fs");
 // 1. Fill Admission Form
 const submitApplication = async (req, res, next) => {
   try {
-    const { personalDetails, academicDetails } = req.body;
+    const { personalDetails, academicDetails, preferredStream } = req.body;
     const applicantId = req.user._id;
 
     const existingApplication = await Application.findOne({
@@ -18,16 +18,16 @@ const submitApplication = async (req, res, next) => {
       throw new ApiError(400, "You have already submitted an application.");
     }
 
-    // Generate the Application ID here
     const count = await Application.countDocuments();
     const year = new Date().getFullYear();
     const applicationId = `IEM-${year}-${1001 + count}`;
 
     const application = await Application.create({
-      applicationId, // Pass it here!
+      applicationId,
       applicant: applicantId,
       personalDetails,
       academicDetails,
+      preferredStream,
     });
 
     logger.info(
