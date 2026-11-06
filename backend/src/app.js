@@ -24,7 +24,15 @@ const globalLimiter = rateLimit({
 });
 app.use('/api', globalLimiter);
 
-app.use(cors({ origin: "http://localhost:4200", credentials: true }));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin or reflect any origin for deployed frontend
+      callback(null, true);
+    },
+    credentials: true,
+  })
+);
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
