@@ -1,0 +1,254 @@
+<div class="container py-4 py-lg-5 animate-fade-in">
+  <!-- Back Button & Breadcrumbs -->
+  <div class="mb-3">
+    <a routerLink="/admin/applications" class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2">
+      <i class="bi bi-arrow-left"></i>
+      <span>Back to Applications</span>
+    </a>
+  </div>
+
+  @if (isLoading()) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="text-muted mt-2">Loading application details...</p>
+    </div>
+  } @else if (!application()) {
+    <div class="card card-custom border-0 shadow-sm p-5 text-center">
+      <i class="bi bi-exclamation-triangle display-4 text-warning d-block mb-3"></i>
+      <h3 class="fw-bold mb-2">Application Not Found</h3>
+      <p class="text-muted">No candidate application was found matching ID: <strong>{{ applicationId }}</strong></p>
+      <div>
+        <a routerLink="/admin/applications" class="btn btn-primary">Return to Applications List</a>
+      </div>
+    </div>
+  } @else {
+    <!-- 1. Header & Decision Action Card -->
+    <div class="card card-custom border-0 shadow-sm p-4 mb-4">
+      <div class="row align-items-center g-3">
+        <div class="col-lg-6">
+          <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+            <h2 class="fw-bold mb-0">{{ application()?.personalDetails?.fullName }}</h2>
+            <span class="badge bg-light text-primary border font-monospace fs-6 px-3 py-1">
+              {{ application()?.applicationId }}
+            </span>
+          </div>
+          <div class="text-muted small">
+            <span><i class="bi bi-envelope me-1"></i> {{ getApplicantEmail() }}</span>
+            <span class="mx-2">•</span>
+            <span><i class="bi bi-clock me-1"></i> Submitted {{ application()?.createdAt | date:'medium' }}</span>
+          </div>
+        </div>
+
+        <div class="col-lg-6 text-lg-end">
+          <div class="d-flex flex-column flex-sm-row justify-content-lg-end align-items-start align-items-sm-center gap-3">
+            <div>
+              <div class="small text-muted mb-1 text-sm-end">Current Decision:</div>
+              <span class="badge-status {{ getStatusClass(application()?.admissionStatus) }} px-3 py-2 fs-6">
+                <i class="bi {{ getStatusIcon(application()?.admissionStatus) }}"></i>
+                <span>{{ application()?.admissionStatus }}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="my-3">
+
+      <!-- Admin Status Action Buttons -->
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 pt-1">
+        <div class="fw-semibold text-dark small d-flex align-items-center gap-1">
+          <i class="bi bi-sliders text-primary"></i> Update Admission Decision:
+        </div>
+
+        <div class="btn-group flex-wrap">
+          <button
+            type="button"
+            class="btn btn-outline-success d-flex align-items-center gap-1"
+            [class.active]="application()?.admissionStatus === 'Approved'"
+            (click)="updateStatus('Approved')"
+            [disabled]="isUpdating()"
+          >
+            <i class="bi bi-check-circle-fill"></i>
+            <span>Approve</span>
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-outline-warning d-flex align-items-center gap-1"
+            [class.active]="application()?.admissionStatus === 'Under Review'"
+            (click)="updateStatus('Under Review')"
+            [disabled]="isUpdating()"
+          >
+            <i class="bi bi-hourglass-split"></i>
+            <span>Under Review</span>
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-outline-danger d-flex align-items-center gap-1"
+            [class.active]="application()?.admissionStatus === 'Rejected'"
+            (click)="updateStatus('Rejected')"
+            [disabled]="isUpdating()"
+          >
+            <i class="bi bi-x-circle-fill"></i>
+            <span>Reject</span>
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-outline-primary d-flex align-items-center gap-1"
+            [class.active]="application()?.admissionStatus === 'Submitted'"
+            (click)="updateStatus('Submitted')"
+            [disabled]="isUpdating()"
+          >
+            <i class="bi bi-send-fill"></i>
+            <span>Reset to Submitted</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Profile Details Grid -->
+    <div class="row g-4 mb-4">
+      <!-- Personal Details -->
+      <div class="col-lg-6">
+        <div class="card card-custom border-0 shadow-sm p-4 h-100">
+          <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+            <i class="bi bi-person-lines-fill text-primary fs-4"></i>
+            <h5 class="fw-bold mb-0">Personal Information</h5>
+          </div>
+
+          <div class="row g-3 small">
+            <div class="col-sm-6">
+              <div class="text-muted">Full Legal Name</div>
+              <div class="fw-semibold text-dark fs-6">{{ application()?.personalDetails?.fullName }}</div>
+            </div>
+            <div class="col-sm-6">
+              <div class="text-muted">Date of Birth</div>
+              <div class="fw-semibold text-dark fs-6">{{ application()?.personalDetails?.dateOfBirth | date:'longDate' }}</div>
+            </div>
+            <div class="col-sm-6">
+              <div class="text-muted">Mobile Number</div>
+              <div class="fw-semibold text-dark fs-6">+91 {{ application()?.personalDetails?.phone }}</div>
+            </div>
+            <div class="col-sm-6">
+              <div class="text-muted">Registered Email</div>
+              <div class="fw-semibold text-dark fs-6">{{ getApplicantEmail() }}</div>
+            </div>
+            <div class="col-12">
+              <div class="text-muted">Postal Address</div>
+              <div class="fw-semibold text-dark">{{ application()?.personalDetails?.address }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Academic Background & Stream -->
+      <div class="col-lg-6">
+        <div class="card card-custom border-0 shadow-sm p-4 h-100">
+          <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+            <i class="bi bi-award-fill text-primary fs-4"></i>
+            <h5 class="fw-bold mb-0">Academic & Preference</h5>
+          </div>
+
+          <div class="mb-3">
+            <div class="text-muted small">Applied Program Stream</div>
+            <div class="d-flex align-items-center gap-2 mt-1">
+              <span class="badge bg-primary fs-6 px-3 py-1 font-monospace">
+                {{ application()?.preferredStream }}
+              </span>
+              <span class="small fw-semibold text-dark">Bachelor of Technology (B.Tech)</span>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-6">
+              <div class="p-3 bg-light rounded-3 border text-center">
+                <div class="text-muted small">10th Grade Aggregate</div>
+                <div class="h4 fw-bold text-primary mb-0 mt-1">{{ application()?.academicDetails?.tenthMarks }}%</div>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="p-3 bg-light rounded-3 border text-center">
+                <div class="text-muted small">12th Grade Aggregate</div>
+                <div class="h4 fw-bold text-primary mb-0 mt-1">{{ application()?.academicDetails?.twelfthMarks }}%</div>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="p-3 bg-light rounded-3 border text-center">
+                <div class="text-muted small">WBJEE General Rank</div>
+                <div class="h5 fw-bold text-dark mb-0 mt-1">
+                  {{ application()?.academicDetails?.wbjeeRank || 'Not Provided' }}
+                </div>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="p-3 bg-light rounded-3 border text-center">
+                <div class="text-muted small">JEE Mains AIR</div>
+                <div class="h5 fw-bold text-dark mb-0 mt-1">
+                  {{ application()?.academicDetails?.jeeMainsRank || 'Not Provided' }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Uploaded Verification Documents -->
+    <div class="card card-custom border-0 shadow-sm p-4">
+      <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-file-earmark-check-fill text-primary fs-4"></i>
+          <h5 class="fw-bold mb-0">Verification Documents</h5>
+        </div>
+        <span class="badge bg-secondary-subtle text-secondary rounded-pill">
+          {{ application()?.documents?.length || 0 }} Files Attached
+        </span>
+      </div>
+
+      @if (!application()?.documents || application()?.documents?.length === 0) {
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-folder-x display-6 text-secondary d-block mb-2"></i>
+          <div class="fw-semibold">No verification documents uploaded by applicant yet.</div>
+        </div>
+      } @else {
+        <div class="row g-3">
+          @for (doc of application()?.documents; track doc._id || doc.fileUrl) {
+            <div class="col-md-6 col-lg-4">
+              <div class="p-3 bg-light rounded-3 border h-100 d-flex flex-column justify-content-between">
+                <div class="d-flex align-items-start gap-2 mb-3">
+                  <div class="bg-primary text-white rounded p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                    <i class="bi bi-file-earmark-pdf fs-5"></i>
+                  </div>
+                  <div class="overflow-hidden">
+                    <div class="fw-bold small text-dark text-truncate">{{ doc.docType }}</div>
+                    <div class="text-muted" style="font-size: 0.72rem;">
+                      Uploaded {{ doc.uploadedAt | date:'shortDate' }}
+                    </div>
+                  </div>
+                </div>
+
+                <a
+                  [href]="doc.fileUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-outline-primary btn-sm w-100 d-flex align-items-center justify-content-center gap-1"
+                >
+                  <i class="bi bi-box-arrow-up-right"></i>
+                  <span>Inspect Document</span>
+                </a>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
+

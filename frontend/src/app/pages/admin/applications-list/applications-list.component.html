@@ -1,0 +1,260 @@
+<div class="container-fluid px-lg-4 py-4 animate-fade-in">
+  <!-- Page Header -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4 pb-3 border-bottom">
+    <div>
+      <div class="d-flex align-items-center gap-2">
+        <h2 class="fw-bold mb-0">Candidate Applications</h2>
+        <span class="badge bg-primary rounded-pill font-monospace">{{ totalApplications() }} Records</span>
+      </div>
+      <p class="text-muted small mb-0">Review submitted credentials, filter by stream or status, and make admission decisions.</p>
+    </div>
+
+    <div class="d-flex gap-2">
+      <a routerLink="/admin/dashboard" class="btn btn-outline-secondary d-flex align-items-center gap-1">
+        <i class="bi bi-speedometer2"></i>
+        <span>Dashboard</span>
+      </a>
+      <button class="btn btn-outline-primary d-flex align-items-center gap-1" (click)="fetchApplications()" [disabled]="isLoading()">
+        <i class="bi bi-arrow-clockwise"></i>
+        <span>Refresh</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters & Search Toolbar -->
+  <div class="card card-custom border-0 shadow-sm p-4 mb-4">
+    <div class="row g-3 align-items-end">
+      <!-- Search Input -->
+      <div class="col-lg-4 col-md-6">
+        <label for="searchInput" class="form-label">Search by Application ID</label>
+        <div class="input-group">
+          <span class="input-group-text bg-light text-muted">
+            <i class="bi bi-search"></i>
+          </span>
+          <input
+            type="text"
+            id="searchInput"
+            class="form-control"
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="onSearch()"
+            placeholder="e.g. IEM-2026-1001"
+          />
+          <button class="btn btn-primary" type="button" (click)="onSearch()">
+            Search
+          </button>
+        </div>
+      </div>
+
+      <!-- Status Filter -->
+      <div class="col-lg-3 col-md-3 col-sm-6">
+        <label for="statusFilter" class="form-label">Admission Status</label>
+        <select
+          id="statusFilter"
+          class="form-select"
+          [(ngModel)]="selectedStatus"
+          (change)="onFilterChange()"
+        >
+          @for (s of statuses; track s) {
+            <option [value]="s">{{ s === 'ALL' ? 'All Statuses' : s }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Stream Filter -->
+      <div class="col-lg-3 col-md-3 col-sm-6">
+        <label for="streamFilter" class="form-label">Engineering Stream</label>
+        <select
+          id="streamFilter"
+          class="form-select"
+          [(ngModel)]="selectedStream"
+          (change)="onFilterChange()"
+        >
+          @for (st of streams; track st) {
+            <option [value]="st">{{ st === 'ALL' ? 'All Streams' : st }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Reset Filters Button -->
+      <div class="col-lg-2 col-md-12 text-end">
+        <button class="btn btn-light border text-muted w-100" (click)="clearFilters()">
+          <i class="bi bi-x-circle me-1"></i> Clear Filters
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Applications Table Card -->
+  <div class="card card-custom border-0 shadow-sm p-4">
+    @if (isLoading()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted mt-2">Loading candidate applications...</p>
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col" class="text-muted small fw-semibold">APPLICATION ID</th>
+              <th scope="col" class="text-muted small fw-semibold">APPLICANT</th>
+              <th scope="col" class="text-muted small fw-semibold">STREAM</th>
+              <th scope="col" class="text-muted small fw-semibold">10th / 12th %</th>
+              <th scope="col" class="text-muted small fw-semibold">WBJEE / JEE</th>
+              <th scope="col" class="text-muted small fw-semibold">DOCUMENTS</th>
+              <th scope="col" class="text-muted small fw-semibold">STATUS</th>
+              <th scope="col" class="text-muted small fw-semibold text-end">DECISION / ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (app of applications(); track app.applicationId) {
+              <tr>
+                <td>
+                  <a [routerLink]="['/admin/applications', app.applicationId]" class="fw-bold font-monospace text-primary text-decoration-none">
+                    {{ app.applicationId }}
+                  </a>
+                  <div class="text-muted" style="font-size: 0.72rem;">{{ app.createdAt | date:'shortDate' }}</div>
+                </td>
+
+                <td>
+                  <div class="fw-semibold text-dark">{{ app.personalDetails?.fullName }}</div>
+                  <div class="text-muted small" style="font-size: 0.75rem;">
+                    <i class="bi bi-envelope me-1"></i> {{ getApplicantEmail(app) }}
+                  </div>
+                  <div class="text-muted small" style="font-size: 0.75rem;">
+                    <i class="bi bi-telephone me-1"></i> +91 {{ app.personalDetails?.phone }}
+                  </div>
+                </td>
+
+                <td>
+                  <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-monospace">
+                    {{ app.preferredStream }}
+                  </span>
+                </td>
+
+                <td>
+                  <div class="small fw-semibold text-dark">
+                    <span>{{ app.academicDetails?.tenthMarks }}%</span> /
+                    <span>{{ app.academicDetails?.twelfthMarks }}%</span>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="small text-muted" style="font-size: 0.8rem;">
+                    <div>WBJEE: <strong class="text-dark">{{ app.academicDetails?.wbjeeRank || 'N/A' }}</strong></div>
+                    <div>JEE: <strong class="text-dark">{{ app.academicDetails?.jeeMainsRank || 'N/A' }}</strong></div>
+                  </div>
+                </td>
+
+                <td>
+                  <span class="badge bg-light text-dark border">
+                    <i class="bi bi-paperclip me-1"></i> {{ app.documents?.length || 0 }} files
+                  </span>
+                </td>
+
+                <td>
+                  <span class="badge-status {{ getStatusClass(app.admissionStatus) }}">
+                    {{ app.admissionStatus }}
+                  </span>
+                </td>
+
+                <td class="text-end">
+                  <div class="btn-group btn-group-sm">
+                    <!-- Detail View Link -->
+                    <a [routerLink]="['/admin/applications', app.applicationId]" class="btn btn-outline-primary" title="Review Complete Application">
+                      <i class="bi bi-file-text"></i>
+                      <span class="d-none d-xl-inline ms-1">Review</span>
+                    </a>
+
+                    <!-- Under Review Action -->
+                    @if (app.admissionStatus !== 'Under Review') {
+                      <button
+                        type="button"
+                        class="btn btn-outline-warning"
+                        (click)="updateStatus(app, 'Under Review')"
+                        [disabled]="updatingAppId() === app.applicationId"
+                        title="Mark as Under Review"
+                      >
+                        <i class="bi bi-hourglass-split"></i>
+                      </button>
+                    }
+
+                    <!-- Approve Action -->
+                    @if (app.admissionStatus !== 'Approved') {
+                      <button
+                        type="button"
+                        class="btn btn-outline-success"
+                        (click)="updateStatus(app, 'Approved')"
+                        [disabled]="updatingAppId() === app.applicationId"
+                        title="Approve Admission"
+                      >
+                        <i class="bi bi-check-lg"></i>
+                      </button>
+                    }
+
+                    <!-- Reject Action -->
+                    @if (app.admissionStatus !== 'Rejected') {
+                      <button
+                        type="button"
+                        class="btn btn-outline-danger"
+                        (click)="updateStatus(app, 'Rejected')"
+                        [disabled]="updatingAppId() === app.applicationId"
+                        title="Reject Admission"
+                      >
+                        <i class="bi bi-x-lg"></i>
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+            @if (applications().length === 0) {
+              <tr>
+                <td colspan="8" class="text-center py-5 text-muted">
+                  <i class="bi bi-inbox display-6 d-block mb-2 text-secondary"></i>
+                  <div class="fw-bold">No applications found matching the selected filters.</div>
+                  <button class="btn btn-sm btn-outline-primary mt-2" (click)="clearFilters()">
+                    Clear Filters
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination Toolbar -->
+      @if (totalPages() > 1) {
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 pt-4 border-top mt-3">
+          <div class="small text-muted">
+            Showing Page <span class="fw-bold text-dark">{{ currentPage() }}</span> of <span class="fw-bold text-dark">{{ totalPages() }}</span>
+            ({{ totalApplications() }} total applications)
+          </div>
+
+          <nav aria-label="Applications navigation">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" [class.disabled]="currentPage() === 1">
+                <button class="page-link" (click)="goToPage(currentPage() - 1)">
+                  <i class="bi bi-chevron-left"></i> Previous
+                </button>
+              </li>
+
+              <li class="page-item active">
+                <span class="page-link">{{ currentPage() }}</span>
+              </li>
+
+              <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+                <button class="page-link" (click)="goToPage(currentPage() + 1)">
+                  Next <i class="bi bi-chevron-right"></i>
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      }
+    }
+  </div>
+</div>
+

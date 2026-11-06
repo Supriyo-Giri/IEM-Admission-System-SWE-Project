@@ -1,0 +1,87 @@
+/* Hero Section with Light Ocean Green & Deep Teal Aura */
+.hero-section {
+  background: radial-gradient(circle at 85% 15%, rgba(45, 212, 191, 0.28) 0%, transparent 55%),
+              radial-gradient(circle at 10% 85%, rgba(20, 184, 166, 0.22) 0%, transparent 50%),
+              radial-gradient(circle at 50% 50%, rgba(13, 148, 136, 0.18) 0%, transparent 70%),
+              linear-gradient(140deg, #042f2e 0%, #064e3b 40%, #0f766e 85%, #115e59 100%);
+  position: relative;
+}
+
+.hero-lead {
+  color: rgba(240, 253, 250, 0.9) !important;
+  font-size: 1.15rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.hero-badge {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.badge-ocean-pill {
+  background: #14b8a6;
+  color: #042f2e;
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 0.25em 0.75em;
+  border-radius: 9999px;
+  letter-spacing: 0.02em;
+}
+
+.hero-card {
+  box-shadow: 0 25px 50px -12px rgba(4, 47, 46, 0.25) !important;
+  border: 1px solid rgba(204, 251, 241, 0.6) !important;
+}
+
+.bg-ocean-tint {
+  background-color: #f0fdfa !important;
+}
+
+.border-ocean-subtle {
+  border-color: #ccfbf1 !important;
+}
+
+.icon-circle-ocean {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0d9488, #14b8a6);
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(13, 148, 136, 0.25);
+}
+
+.icon-circle-emerald {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #059669, #10b981);
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(5, 150, 105, 0.25);
+}
+
+.card-hover {
+  border-color: #e2e8f0;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -8px rgba(13, 148, 136, 0.15);
+  border-color: #2dd4bf !important;
+}
+
+.step-badge {
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, #0d9488, #2dd4bf);
+  color: #ffffff;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.2rem;
+  box-shadow: 0 6px 14px rgba(13, 148, 136, 0.3);
+}

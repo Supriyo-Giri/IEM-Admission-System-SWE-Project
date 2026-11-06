@@ -1,0 +1,19 @@
+.stream-option label.btn-outline-primary {
+  border-width: 2px;
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+  color: #334155;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stream-option label.btn-outline-primary:hover {
+  border-color: #99f6e4;
+  background-color: #f0fdfa;
+}
+
+.stream-option input.btn-check:checked + label.btn-outline-primary {
+  background-color: #f0fdfa;
+  border-color: #0d9488;
+  color: #0f172a;
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.18);
+}

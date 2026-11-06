@@ -1,0 +1,179 @@
+<div class="animate-fade-in">
+  <!-- Hero Section -->
+  <section class="hero-section py-5 position-relative overflow-hidden">
+    <div class="container py-lg-5 position-relative" style="z-index: 2;">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-7">
+          <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill hero-badge mb-3">
+            <span class="badge-ocean-pill">Admissions 2026</span>
+            <span class="small text-light text-opacity-90">B.Tech Engineering Applications Now Open</span>
+          </div>
+
+          <h1 class="display-4 fw-bold lh-sm mb-4 text-white">
+            Build Your Future in <span class="text-gradient-ocean">Computer Science</span> & Engineering
+          </h1>
+
+          <p class="lead hero-lead mb-4">
+            Welcome to the official admissions portal for the Institute of Engineering & Management (IEM). Apply online, upload credentials, and track your admission progress in real time.
+          </p>
+
+          <div class="d-flex flex-wrap gap-3">
+            @if (!authService.isAuthenticated()) {
+              <a routerLink="/register" class="btn btn-primary btn-lg px-4 py-3 shadow-lg d-flex align-items-center gap-2">
+                <span>Start Your Application</span>
+                <i class="bi bi-arrow-right"></i>
+              </a>
+              <a routerLink="/login" class="btn btn-outline-light btn-lg px-4 py-3 d-flex align-items-center gap-2">
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span>Sign In to Portal</span>
+              </a>
+            } @else if (authService.isAdmin()) {
+              <a routerLink="/admin/dashboard" class="btn btn-primary btn-lg px-4 py-3 shadow-lg fw-bold d-flex align-items-center gap-2">
+                <i class="bi bi-shield-lock-fill"></i>
+                <span>Go to Admin Dashboard</span>
+              </a>
+            } @else {
+              <a routerLink="/applicant/dashboard" class="btn btn-primary btn-lg px-4 py-3 shadow-lg d-flex align-items-center gap-2">
+                <i class="bi bi-speedometer2"></i>
+                <span>View My Application</span>
+              </a>
+              <a routerLink="/apply" class="btn btn-outline-light btn-lg px-4 py-3 d-flex align-items-center gap-2">
+                <i class="bi bi-file-earmark-plus"></i>
+                <span>Fill Admission Form</span>
+              </a>
+            }
+          </div>
+
+          <!-- Quick Stats Highlights -->
+          <div class="row g-4 mt-4 pt-3 border-top border-white border-opacity-15">
+            <div class="col-4">
+              <div class="h3 fw-bold mb-0 text-white">#1</div>
+              <div class="small text-light text-opacity-80">Private Engg College in WB</div>
+            </div>
+            <div class="col-4">
+              <div class="h3 fw-bold mb-0 text-white">100%</div>
+              <div class="small text-light text-opacity-80">Placement Track Record</div>
+            </div>
+            <div class="col-4">
+              <div class="h3 fw-bold mb-0 text-white">40+ LPA</div>
+              <div class="small text-light text-opacity-80">Highest Package Offered</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="card bg-white text-dark shadow-xl border-0 rounded-4 p-4 p-md-5 position-relative overflow-hidden hero-card">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+              <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-semibold">
+                <i class="bi bi-door-open me-1"></i> Quick Portal Access
+              </span>
+              <span class="small text-muted"><i class="bi bi-shield-check text-success"></i> SSL Secure</span>
+            </div>
+
+            <h4 class="fw-bold mb-2 text-dark">Track Admission Online</h4>
+            <p class="text-muted small mb-4">Log in to view application status, upload documents, and download admission notifications.</p>
+
+            <div class="vstack gap-3 mb-4">
+              <div class="d-flex align-items-center gap-3 p-3 rounded-3 bg-ocean-tint border border-ocean-subtle">
+                <div class="icon-circle-ocean d-flex align-items-center justify-content-center">
+                  <i class="bi bi-lightning-charge-fill text-white"></i>
+                </div>
+                <div>
+                  <div class="fw-bold small text-dark">Instant Online Verification</div>
+                  <div class="text-muted" style="font-size: 0.78rem;">Upload documents directly to Cloudinary</div>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center gap-3 p-3 rounded-3 bg-ocean-tint border border-ocean-subtle">
+                <div class="icon-circle-emerald d-flex align-items-center justify-content-center">
+                  <i class="bi bi-bell-fill text-white"></i>
+                </div>
+                <div>
+                  <div class="fw-bold small text-dark">Direct Status Updates</div>
+                  <div class="text-muted" style="font-size: 0.78rem;">From Under Review to Approved</div>
+                </div>
+              </div>
+            </div>
+
+            <a routerLink="/login" class="btn btn-outline-primary w-100 py-2 fw-semibold">
+              Log In to Check Status
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Programs / Streams Section -->
+  <section class="py-5 bg-white">
+    <div class="container py-4">
+      <div class="text-center max-w-xl mx-auto mb-5">
+        <span class="badge bg-primary-subtle text-primary px-3 py-1 rounded-pill fw-bold text-uppercase mb-2">Specializations</span>
+        <h2 class="display-6 fw-bold">Available Engineering Streams</h2>
+        <p class="text-muted">Choose from industry-leading disciplines designed in collaboration with top tech giants.</p>
+      </div>
+
+      <div class="row g-4">
+        @for (stream of streams; track stream.code) {
+          <div class="col-lg-6">
+            <div class="card h-100 border rounded-4 p-4 p-xl-5 card-hover transition-all">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1 fw-bold">{{ stream.badge }}</span>
+                <span class="text-muted small fw-semibold"><i class="bi bi-people me-1"></i> {{ stream.seats }}</span>
+              </div>
+              <h4 class="fw-bold text-dark mb-2">{{ stream.name }}</h4>
+              <p class="text-secondary small mb-4 flex-grow-1">{{ stream.desc }}</p>
+              <div class="d-flex align-items-center justify-content-between pt-3 border-top border-ocean-subtle">
+                <span class="font-monospace small text-primary fw-bold">Code: {{ stream.code }}</span>
+                <a routerLink="/apply" class="text-decoration-none fw-semibold text-primary d-inline-flex align-items-center gap-1">
+                  Apply for this Stream <i class="bi bi-chevron-right"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Admission Process Section -->
+  <section class="py-5 bg-ocean-tint">
+    <div class="container py-4">
+      <div class="text-center max-w-xl mx-auto mb-5">
+        <span class="badge bg-primary-subtle text-primary px-3 py-1 rounded-pill fw-bold text-uppercase mb-2">Easy Steps</span>
+        <h2 class="display-6 fw-bold">How The Admission Works</h2>
+        <p class="text-muted">Simple, transparent, four-step digital admission procedure.</p>
+      </div>
+
+      <div class="row g-4">
+        @for (item of steps; track item.step) {
+          <div class="col-md-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center position-relative bg-white">
+              <div class="step-badge mx-auto mb-3">
+                {{ item.step }}
+              </div>
+              <h5 class="fw-bold mb-2">{{ item.title }}</h5>
+              <p class="text-muted small mb-0">{{ item.desc }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="py-5 bg-gradient-primary text-white text-center">
+    <div class="container py-3">
+      <h2 class="display-6 fw-bold mb-3 text-white">Ready to Start Your Engineering Journey?</h2>
+      <p class="lead text-light mb-4">Admissions are open for the academic batch 2026-2030. Submit your form early to secure your seat.</p>
+      <div class="d-flex justify-content-center gap-3">
+        <a routerLink="/register" class="btn btn-light btn-lg px-4 text-primary fw-bold shadow">
+          Create Applicant Account
+        </a>
+        <a routerLink="/login" class="btn btn-outline-light btn-lg px-4">
+          Applicant Login
+        </a>
+      </div>
+    </div>
+  </section>
+</div>

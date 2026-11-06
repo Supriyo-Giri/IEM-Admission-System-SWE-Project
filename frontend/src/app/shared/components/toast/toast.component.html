@@ -1,0 +1,37 @@
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1090;">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div
+      class="toast show shadow-lg border-0 mb-2 custom-toast text-bg-{{ toast.type }}"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+    >
+      <div class="d-flex align-items-center p-3">
+        <div class="me-2 fs-5">
+          @if (toast.type === 'success') {
+            <i class="bi bi-check-circle-fill"></i>
+          } @else if (toast.type === 'danger') {
+            <i class="bi bi-exclamation-triangle-fill"></i>
+          } @else if (toast.type === 'warning') {
+            <i class="bi bi-exclamation-circle-fill"></i>
+          } @else {
+            <i class="bi bi-info-circle-fill"></i>
+          }
+        </div>
+        <div class="toast-body flex-grow-1 p-0">
+          @if (toast.title) {
+            <div class="fw-bold mb-1">{{ toast.title }}</div>
+          }
+          <div class="small">{{ toast.message }}</div>
+        </div>
+        <button
+          type="button"
+          class="btn-close btn-close-white ms-2"
+          aria-label="Close"
+          (click)="toastService.remove(toast.id)"
+        ></button>
+      </div>
+    </div>
+  }
+</div>
+

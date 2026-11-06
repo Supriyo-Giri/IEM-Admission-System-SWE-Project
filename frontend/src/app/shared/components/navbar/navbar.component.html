@@ -1,0 +1,135 @@
+<!-- Top Announcement & Helpline Bar -->
+<div class="top-announcement-bar d-none d-md-block py-1">
+  <div class="container-fluid px-lg-4">
+    <div class="d-flex justify-content-between align-items-center small">
+      <div class="d-flex align-items-center gap-2">
+        <span class="live-pulse-badge">
+          <span class="pulse-dot"></span>
+          <span>LIVE</span>
+        </span>
+        <span class="text-light text-opacity-80">
+          Admissions 2026-27 B.Tech Engineering &bull; Round 1 Seat Allocation In Progress
+        </span>
+      </div>
+      <div class="d-flex align-items-center gap-4 text-light text-opacity-80">
+        <a href="tel:+913323572059" class="top-bar-link text-decoration-none">
+          <i class="bi bi-telephone-fill text-ocean me-1"></i> +91 33 2357 2059
+        </a>
+        <span class="text-white text-opacity-25">|</span>
+        <a href="mailto:admissions@iemcal.com" class="top-bar-link text-decoration-none">
+          <i class="bi bi-envelope-fill text-ocean me-1"></i> admissions@iemcal.com
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Glassmorphic Navigation -->
+<nav class="navbar navbar-expand-lg sticky-top main-navbar">
+  <div class="container-fluid px-lg-4">
+    <!-- Brand / Logo Area -->
+    <a class="navbar-brand d-flex align-items-center gap-3 text-decoration-none" routerLink="/" (click)="closeMenu()">
+      <div class="brand-emblem d-flex align-items-center justify-content-center shadow-sm">
+        <i class="bi bi-mortarboard-fill fs-4 text-white"></i>
+      </div>
+      <div class="d-flex flex-column">
+        <div class="d-flex align-items-center gap-2">
+          <span class="brand-title fw-bold text-white tracking-wide">IEM KOLKATA</span>
+          <span class="badge badge-session font-monospace">2026-27</span>
+        </div>
+        <span class="brand-subtitle text-light text-opacity-75">Admissions &amp; Allotment Portal</span>
+      </div>
+    </a>
+
+    <!-- Mobile Menu Toggle Button -->
+    <button
+      class="navbar-toggler border-0 shadow-none text-white custom-toggler"
+      type="button"
+      (click)="toggleMenu()"
+      aria-controls="mainNavbar"
+      [attr.aria-expanded]="!isMenuCollapsed()"
+      aria-label="Toggle navigation"
+    >
+      <i class="bi" [class.bi-list]="isMenuCollapsed()" [class.bi-x-lg]="!isMenuCollapsed()"></i>
+    </button>
+
+    <!-- Collapsible Menu -->
+    <div class="collapse navbar-collapse" [class.show]="!isMenuCollapsed()" id="mainNavbar">
+      <!-- Left Navigation Links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1 mt-3 mt-lg-0 nav-pills-custom">
+        <li class="nav-item">
+          <a class="nav-link px-3 py-2" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">
+            <i class="bi bi-house-door-fill me-1"></i> Home
+          </a>
+        </li>
+
+        @if (authService.isAuthenticated()) {
+          @if (authService.isApplicant()) {
+            <li class="nav-item">
+              <a class="nav-link px-3 py-2" routerLink="/applicant/dashboard" routerLinkActive="active" (click)="closeMenu()">
+                <i class="bi bi-speedometer2 me-1"></i> My Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link px-3 py-2" routerLink="/apply" routerLinkActive="active" (click)="closeMenu()">
+                <i class="bi bi-file-earmark-text-fill me-1"></i> Apply Form
+              </a>
+            </li>
+          }
+
+          @if (authService.isAdmin()) {
+            <li class="nav-item">
+              <a class="nav-link px-3 py-2" routerLink="/admin/dashboard" routerLinkActive="active" (click)="closeMenu()">
+                <i class="bi bi-bar-chart-line-fill me-1"></i> Admin Analytics
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link px-3 py-2" routerLink="/admin/applications" routerLinkActive="active" (click)="closeMenu()">
+                <i class="bi bi-people-fill me-1"></i> Candidate Applications
+              </a>
+            </li>
+          }
+        }
+      </ul>
+
+      <!-- Right User / Auth Controls -->
+      <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0 border-top border-lg-0 pt-3 pt-lg-0 border-white border-opacity-10">
+        @if (authService.isAuthenticated()) {
+          <!-- User Profile Chip -->
+          <div class="user-chip d-flex align-items-center gap-2 py-1 px-3 rounded-pill">
+            <div class="user-avatar text-white fw-bold">
+              {{ authService.currentUser()?.firstName?.charAt(0) || 'U' }}
+              <span class="user-status-dot"></span>
+            </div>
+            <div class="d-flex flex-column text-start">
+              <span class="user-name text-white lh-sm fw-semibold">
+                {{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}
+              </span>
+              <span class="user-role-badge {{ authService.isAdmin() ? 'role-admin' : 'role-applicant' }}">
+                <i class="bi {{ authService.isAdmin() ? 'bi-shield-fill-check' : 'bi-mortarboard-fill' }} me-1"></i>
+                {{ authService.isAdmin() ? 'Administrator' : 'Applicant' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Logout Button -->
+          <button class="btn btn-logout btn-sm px-3 py-1 rounded-pill d-flex align-items-center gap-1" (click)="logout()">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Sign Out</span>
+          </button>
+        } @else {
+          <!-- Guest Links -->
+          <a routerLink="/login" class="btn btn-signin btn-sm px-3 py-2 rounded-pill d-flex align-items-center gap-1" (click)="closeMenu()">
+            <i class="bi bi-box-arrow-in-right"></i>
+            <span>Sign In</span>
+          </a>
+          <a routerLink="/register" class="btn btn-register btn-sm px-4 py-2 rounded-pill d-flex align-items-center gap-2 shadow" (click)="closeMenu()">
+            <i class="bi bi-person-plus-fill"></i>
+            <span class="fw-bold">Register</span>
+            <i class="bi bi-arrow-right small"></i>
+          </a>
+        }
+      </div>
+    </div>
+  </div>
+</nav>
