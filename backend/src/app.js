@@ -50,6 +50,8 @@ app.use("/api/applications", require("./routes/application.routes"));
 app.use("/api/admin", require("./routes/admin.routes"));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+app.get("/", (req, res) => res.send('IEM Admission Service'));
+
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "OK", message: "Server is running" });
 });
