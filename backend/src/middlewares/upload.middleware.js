@@ -3,7 +3,22 @@ const path = require("path");
 const ApiError = require("../utils/ApiError");
 
 // Save temporarily to disk
+const path = require("path");
+const fs = require("fs");
+// Ensure uploads directory exists with absolute path
+const uploadDir = path.resolve(__dirname, "../../uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
   destination: function (req, file, cb) {
     cb(null, "uploads/");
   },
